@@ -56,6 +56,8 @@ export interface GamePulse {
   buzzed_count: number;
   settings: Partial<GameSettings>;
   updated_at: string;
+  /** Human-readable label for the state transition that produced this row. */
+  last_event: string | null;
 }
 
 export interface StudentIdentity {

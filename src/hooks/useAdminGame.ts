@@ -96,6 +96,7 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
   const consecutive403Ref = useRef(0);
   const pollAbortRef = useRef<AbortController | null>(null);
   const hasLoadedRef = useRef(false);
+  const lastEventRef = useRef<string | null>(null);
 
   // Base refresh — used by realtime callbacks, mount effect, and action dispatch.
   // No signal, no 403 counting, no polling termination.
@@ -156,10 +157,29 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
     }
   }, [gameId, adminToken, unauthorized, missing]);
 
+  // Events that warrant a full snapshot fetch. Minor events (status_change,
+  // student_ready) are reflected in the pulse but don't require the expensive
+  // admin_snapshot RPC — the dashboard already sees those fields from game_pulse.
+  const MAJOR_EVENTS = new Set([
+    'round_started',
+    'buzzer_enabled',
+    'buzzer_disabled',
+    'buzz_window_reset',
+    'winner_determined',
+    'points_awarded',
+    'winner_undone',
+    'settings_updated',
+    'student_added',
+  ]);
+
   const { pulse, connection } = useGamePulse({
     gameId,
     onResync: () => void refresh(),
-    onPulse: () => void refresh(),
+    onPulse: (row) => {
+      lastEventRef.current = row.last_event ?? null;
+      if (!MAJOR_EVENTS.has(row.last_event ?? '')) return;
+      void refresh();
+    },
   });
 
   useEffect(() => {

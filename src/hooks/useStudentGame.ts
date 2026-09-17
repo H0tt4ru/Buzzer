@@ -17,7 +17,7 @@ import type {
   StudentStateResult,
 } from '@/types/game';
 
-const HEARTBEAT_MS = 10_000;
+const HEARTBEAT_MS = 30_000;
 
 export interface UseStudentGameResult {
   loading: boolean;
@@ -117,7 +117,7 @@ export function useStudentGame(token: string): UseStudentGameResult {
       // Fast path: fold the shared parts of the pulse straight into local
       // state so the transition is not waiting on a second round trip. The
       // student-specific parts (my_buzz, excluded) arrive with the resync that
-      // follows immediately after.
+      // follows on major transitions or the next heartbeat.
       setState((previous) => {
         if (!previous) return previous;
         if (row.revision < previous.revision) return previous;
@@ -152,7 +152,22 @@ export function useStudentGame(token: string): UseStudentGameResult {
           },
         };
       });
-      void resync();
+
+      // Only full-sync on transitions where the client's personal state may be
+      // stale (round boundary, buzzer window change, score change). Minor
+      // events (status flips, ready-count changes) are picked up by the
+      // heartbeat without an extra RPC.
+      const syncEvents = new Set([
+        'round_started',
+        'buzzer_enabled',
+        'buzzer_disabled',
+        'buzz_window_reset',
+        'winner_determined',
+        'points_awarded',
+        'winner_undone',
+        'settings_updated',
+      ]);
+      if (syncEvents.has(row.last_event ?? '')) void resync();
     },
   });
 
