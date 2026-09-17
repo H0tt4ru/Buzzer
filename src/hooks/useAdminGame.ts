@@ -112,7 +112,9 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
       if ((err as { kind?: string }).kind === 'unauthorized') setUnauthorized(true);
       if ((err as { kind?: string }).kind === 'missing') setMissing(true);
     } finally {
-      if (!hasLoadedRef.current) setLoading(false);
+      // Always clear loading so the spinner doesn't get stuck when the ref
+      // flips to true between try and finally (a normal-success path).
+      setLoading(false);
     }
   }, [gameId, adminToken, unauthorized, missing]);
 
@@ -148,7 +150,9 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
         setMissing(true);
       }
     } finally {
-      if (!hasLoadedRef.current) setLoading(false);
+      // Same rule: always clear loading. The hasLoadedRef guard on setLoading(true)
+      // prevents the spinner from flashing on subsequent real-time updates.
+      setLoading(false);
     }
   }, [gameId, adminToken, unauthorized, missing]);
 
