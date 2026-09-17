@@ -1,0 +1,154 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ===========================================================================
+   Design tokens — "studio kelas": a bright quiz-show stage.
+
+   The stage is deep indigo so that a glowing buzzer is the brightest thing in
+   the room (and so a projected dashboard does not blind a class). Boldness is
+   spent in one place: the buzzer. Panels, tables and history stay quiet.
+   =========================================================================== */
+@layer base {
+  :root {
+    --stage-900: 258 62% 11%;
+    --stage-800: 257 54% 16%;
+    --stage-700: 256 44% 24%;
+    --stage-600: 255 34% 34%;
+
+    --magenta: 335 100% 59%;
+    --lemon: 46 100% 62%;
+    --cyan: 175 74% 51%;
+    --lime: 111 100% 71%;
+    --cream: 33 100% 96%;
+
+    /* shadcn/ui contract, mapped onto the stage palette. */
+    --background: var(--stage-900);
+    --foreground: var(--cream);
+    --card: var(--stage-800);
+    --card-foreground: var(--cream);
+    --popover: var(--stage-800);
+    --popover-foreground: var(--cream);
+    --primary: var(--magenta);
+    --primary-foreground: 0 0% 100%;
+    --secondary: var(--stage-700);
+    --secondary-foreground: var(--cream);
+    --muted: var(--stage-700);
+    --muted-foreground: 256 20% 74%;
+    --accent: var(--cyan);
+    --accent-foreground: 258 62% 11%;
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 256 34% 30%;
+    --input: 256 34% 30%;
+    --ring: var(--lemon);
+    --radius: 1.25rem;
+
+    /* Loaded via <link> in layout.tsx. Both stacks degrade to system fonts,
+       so a classroom with no access to fonts.googleapis.com still reads
+       correctly — it just loses the rounded display face. */
+    --font-display: 'Baloo 2', 'Trebuchet MS', 'Segoe UI', system-ui, sans-serif;
+    --font-ui: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  html {
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-family: var(--font-ui);
+    /* Stop the pull-to-refresh gesture stealing a buzzer press. */
+    overscroll-behavior-y: contain;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+    letter-spacing: -0.01em;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-4 ring-ring/70 ring-offset-2 ring-offset-background;
+  }
+
+  /* Respect a reduced-motion preference: the decorative loops stop, the
+     state changes still animate briefly so it is clear what happened. */
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 120ms !important;
+    }
+    .motion-loop { animation: none !important; }
+  }
+}
+
+@layer components {
+  /* The stage backdrop: two slow-drifting colour fields. One orchestrated
+     ambient effect, not a per-card gradient wash. */
+  .stage-backdrop {
+    background:
+      radial-gradient(60rem 40rem at 12% -10%, hsl(var(--magenta) / 0.22), transparent 60%),
+      radial-gradient(50rem 36rem at 92% 8%, hsl(var(--cyan) / 0.18), transparent 62%),
+      radial-gradient(44rem 30rem at 50% 108%, hsl(var(--lemon) / 0.14), transparent 60%),
+      hsl(var(--stage-900));
+  }
+
+  .panel {
+    @apply rounded-[--radius] border border-white/10 bg-card/80 backdrop-blur-sm;
+  }
+
+  .stat-figure {
+    font-family: var(--font-display);
+    @apply text-4xl font-extrabold leading-none tabular-nums sm:text-5xl;
+  }
+
+  /* Buzzer surfaces. Physical-feeling: a thick bottom edge that compresses on
+     press, so the button reads as a real desk buzzer at a glance. */
+  .buzzer-face {
+    @apply relative flex select-none items-center justify-center rounded-full;
+    transition: transform 90ms cubic-bezier(0.2, 0, 0, 1), box-shadow 120ms ease-out;
+  }
+  .buzzer-live {
+    background: radial-gradient(circle at 50% 30%, hsl(345 100% 72%), hsl(var(--magenta)) 55%, hsl(340 90% 42%));
+    box-shadow:
+      0 1.25rem 0 0 hsl(340 85% 30%),
+      0 0 0 0.75rem hsl(var(--lemon) / 0.35),
+      0 0 6rem 1.5rem hsl(var(--magenta) / 0.55);
+  }
+  .buzzer-live:active {
+    transform: translateY(1rem) scale(0.985);
+    box-shadow:
+      0 0.25rem 0 0 hsl(340 85% 30%),
+      0 0 0 0.5rem hsl(var(--lemon) / 0.45),
+      0 0 3rem 1rem hsl(var(--magenta) / 0.45);
+  }
+  .buzzer-idle {
+    background: radial-gradient(circle at 50% 30%, hsl(var(--stage-600)), hsl(var(--stage-700)) 60%, hsl(var(--stage-800)));
+    box-shadow: 0 1rem 0 0 hsl(258 50% 9%), inset 0 0 0 1px hsl(0 0% 100% / 0.06);
+  }
+  .buzzer-won {
+    background: radial-gradient(circle at 50% 30%, hsl(52 100% 76%), hsl(var(--lemon)) 55%, hsl(38 95% 50%));
+    box-shadow: 0 1rem 0 0 hsl(35 90% 34%), 0 0 6rem 1.5rem hsl(var(--lemon) / 0.5);
+  }
+  .buzzer-lost {
+    background: radial-gradient(circle at 50% 30%, hsl(256 30% 40%), hsl(var(--stage-700)) 70%);
+    box-shadow: 0 0.75rem 0 0 hsl(258 50% 9%);
+  }
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  /* Keeps a two-hand grip from selecting text while jabbing at the buzzer. */
+  .no-select {
+    -webkit-user-select: none;
+    user-select: none;
+    touch-action: manipulation;
+  }
+}
