@@ -95,22 +95,24 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
   const pollingStoppedRef = useRef(false);
   const consecutive403Ref = useRef(0);
   const pollAbortRef = useRef<AbortController | null>(null);
+  const hasLoadedRef = useRef(false);
 
   // Base refresh — used by realtime callbacks, mount effect, and action dispatch.
   // No signal, no 403 counting, no polling termination.
   const refresh = useCallback(async () => {
     if (!adminToken || unauthorized || missing) return;
     try {
-      setLoading(true);
+      if (!hasLoadedRef.current) setLoading(true);
       const body = await fetchSnapshot(gameId, adminToken);
       setSnapshot(body);
       setUnauthorized(false);
       setMissing(false);
+      hasLoadedRef.current = true;
     } catch (err: unknown) {
       if ((err as { kind?: string }).kind === 'unauthorized') setUnauthorized(true);
       if ((err as { kind?: string }).kind === 'missing') setMissing(true);
     } finally {
-      setLoading(false);
+      if (!hasLoadedRef.current) setLoading(false);
     }
   }, [gameId, adminToken, unauthorized, missing]);
 
@@ -120,12 +122,13 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
     const controller = pollAbortRef.current;
     if (!controller) return;
     try {
-      setLoading(true);
+      if (!hasLoadedRef.current) setLoading(true);
       const body = await fetchSnapshot(gameId, adminToken, controller.signal);
       consecutive403Ref.current = 0;           // reset on any success
       setSnapshot(body);
       setUnauthorized(false);
       setMissing(false);
+      hasLoadedRef.current = true;
       if (body?.game.status === 'ended') {
         pollingStoppedRef.current = true;       // no more polls; no abort needed
       }
@@ -145,7 +148,7 @@ export function useAdminGame(gameId: string, adminToken: string | null): UseAdmi
         setMissing(true);
       }
     } finally {
-      setLoading(false);
+      if (!hasLoadedRef.current) setLoading(false);
     }
   }, [gameId, adminToken, unauthorized, missing]);
 
