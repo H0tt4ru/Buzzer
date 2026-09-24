@@ -6,7 +6,7 @@
 
 export const t = {
   app: {
-    name: 'Bel Kelas',
+    name: 'Bel cerdas cermat',
     tagline: 'Rebutan jawaban, langsung dari HP masing-masing',
   },
 
