@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { cn } from '@/lib/utils';
@@ -23,55 +21,8 @@ export function SettingsPanel({
   onChange: (patch: Partial<GameSettings>) => Promise<void> | void;
   busy?: boolean;
 }) {
-  const [points, setPoints] = useState(String(settings.points_per_win));
-
-  useEffect(() => {
-    setPoints(String(settings.points_per_win));
-  }, [settings.points_per_win]);
-
-  const commitPoints = () => {
-    const parsed = Number.parseInt(points, 10);
-    const next = Number.isFinite(parsed) ? Math.min(100, Math.max(-100, parsed)) : 1;
-    setPoints(String(next));
-    if (next !== settings.points_per_win) void onChange({ points_per_win: next });
-  };
-
   return (
     <div className="flex flex-col gap-3">
-      {/* Scoring ------------------------------------------------------- */}
-      <Row label={t.admin.settingPoints}>
-        <div className="flex items-center gap-2">
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="−1"
-            disabled={busy}
-            onClick={() => void onChange({ points_per_win: Math.max(-100, settings.points_per_win - 1) })}
-          >
-            −
-          </Button>
-          <input
-            inputMode="numeric"
-            value={points}
-            onChange={(event) => setPoints(event.target.value.replace(/[^0-9\-]/g, ''))}
-            onBlur={commitPoints}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') commitPoints();
-            }}
-            className="h-11 w-16 rounded-md bg-white/5 text-center font-display text-xl font-bold tabular-nums ring-1 ring-white/15 focus:outline-none focus:ring-2 focus:ring-lemon"
-          />
-          <Button
-            variant="outline"
-            size="icon"
-            aria-label="+1"
-            disabled={busy}
-            onClick={() => void onChange({ points_per_win: Math.min(100, settings.points_per_win + 1) })}
-          >
-            +
-          </Button>
-        </div>
-      </Row>
-
       {/* Buzzer mode --------------------------------------------------- */}
       <Row label={t.admin.settingBuzzerMode}>
         <Choice
@@ -96,22 +47,6 @@ export function SettingsPanel({
           ]}
           disabled={busy}
           onSelect={(value: CountdownSeconds) => void onChange({ countdown_seconds: value })}
-        />
-      </Row>
-
-      {/* Awarding ------------------------------------------------------ */}
-      <Row
-        label={t.admin.settingAwardMode}
-        hint="Mode manual berguna kalau poin baru diberikan setelah jawaban benar."
-      >
-        <Choice
-          value={settings.award_mode}
-          options={[
-            { value: 'auto', label: t.admin.settingAwardAuto },
-            { value: 'manual', label: t.admin.settingAwardManual },
-          ]}
-          disabled={busy}
-          onSelect={(value) => void onChange({ award_mode: value })}
         />
       </Row>
 

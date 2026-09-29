@@ -18,6 +18,6 @@ export const DEFAULT_SETTINGS: GameSettings = {
   live_leaderboard: true,
   student_leaderboard: false,
   require_all_ready: false,
-  award_mode: 'auto',
+  award_mode: 'manual',
   exclude_previous_on_reopen: true,
 };

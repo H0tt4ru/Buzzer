@@ -43,7 +43,7 @@ create table games (
                          'live_leaderboard', true,      -- visible to the teacher
                          'student_leaderboard', false,  -- visible to students
                          'require_all_ready', false,
-                         'award_mode', 'auto',          -- 'auto' | 'manual'
+                          'award_mode', 'manual',          -- 'auto' | 'manual'
                          'exclude_previous_on_reopen', true
                        ),
   created_at           timestamptz not null default now(),

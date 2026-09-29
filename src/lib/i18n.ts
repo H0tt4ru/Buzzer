@@ -156,9 +156,6 @@ export const t = {
     settingLiveLeaderboard: 'Tampilkan klasemen selama permainan',
     settingStudentLeaderboard: 'Regu boleh melihat klasemen',
     settingRequireReady: 'Wajib semua regu siap',
-    settingAwardMode: 'Pemberian poin',
-    settingAwardAuto: 'Otomatis saat menang',
-    settingAwardManual: 'Setelah guru menyetujui jawaban',
     settingExcludePrevious: 'Kunci regu sebelumnya saat buzzer dibuka lagi',
     settingsSaved: 'Pengaturan disimpan',
 

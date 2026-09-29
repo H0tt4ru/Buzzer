@@ -55,6 +55,7 @@ export function GameControls({
 
   const manualAward = game.settings.award_mode === 'manual';
   const canAward = hasWinner && manualAward && !(round?.points_awarded ?? false);
+  const nextRoundDisabled = working || paused || (manualAward && hasWinner && !(round?.points_awarded ?? false));
 
   if (ended) {
     return (
@@ -75,7 +76,7 @@ export function GameControls({
         <Button
           size="xl"
           variant="accent"
-          disabled={working || paused}
+          disabled={nextRoundDisabled}
           onClick={() => void onRun('next_round')}
         >
           <PlusCircle />
@@ -114,10 +115,23 @@ export function GameControls({
 
           <div className="flex flex-wrap gap-2">
             {canAward ? (
-              <Button variant="lemon" disabled={working} onClick={() => void onRun('award_point')}>
-                <Trophy />
-                {t.admin.awardPoint}
-              </Button>
+              <>
+                <Button
+                  variant="lemon"
+                  disabled={working}
+                  onClick={() => void onRun('award_point', { points: 100 })}
+                >
+                  <Trophy />
+                  +100
+                </Button>
+                <Button
+                  variant="outline"
+                  disabled={working}
+                  onClick={() => void onRun('award_point', { points: -100 })}
+                >
+                  −100
+                </Button>
+              </>
             ) : null}
 
             <Button
