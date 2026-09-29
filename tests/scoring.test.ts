@@ -15,8 +15,8 @@ describe('pointsForRound', () => {
     expect(pointsForRound(result, settings({ points_per_win: 5 }))).toBe(5);
   });
 
-  it('never awards negative points', () => {
-    expect(pointsForRound(result, settings({ points_per_win: -3 }))).toBe(0);
+  it('supports negative points (penalty rounds)', () => {
+    expect(pointsForRound(result, settings({ points_per_win: -3 }))).toBe(-3);
   });
 
   it('supports a zero-point round for practice games', () => {

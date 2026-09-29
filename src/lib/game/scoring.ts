@@ -23,7 +23,7 @@ export interface ScoreRule {
 
 export const WINNER_TAKES_POINTS: ScoreRule = {
   id: 'winner_takes_points',
-  points: (_result, settings) => Math.max(0, settings.points_per_win),
+  points: (_result, settings) => settings.points_per_win,
 };
 
 export const RULES: ScoreRule[] = [WINNER_TAKES_POINTS];

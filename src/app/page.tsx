@@ -26,7 +26,7 @@ export default function HomePage() {
         </Link>
       </Button>
 
-      <ul className="grid w-full max-w-3xl gap-3 sm:grid-cols-3">
+      {/* <ul className="grid w-full max-w-3xl gap-3 sm:grid-cols-3">
         <Feature
           icon={<Users className="size-5 text-cyan" />}
           title="Tanpa pendaftaran"
@@ -42,7 +42,7 @@ export default function HomePage() {
           title="Klasemen langsung"
           body="Poin, ronde tanpa batas, dan podium juara di akhir permainan."
         />
-      </ul>
+      </ul> */}
     </main>
   );
 }

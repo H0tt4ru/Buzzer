@@ -42,7 +42,7 @@ begin
   if p_settings is null then return v_out; end if;
 
   if p_settings ? 'points_per_win' then
-    v_points := greatest(0, least(100, (p_settings->>'points_per_win')::int));
+    v_points := greatest(-100, least(100, (p_settings->>'points_per_win')::int));
     v_out := v_out || jsonb_build_object('points_per_win', v_points);
   end if;
 
@@ -460,10 +460,10 @@ begin
 
   if v_round.points_awarded then
     update scores
-       set score = greatest(0, score - v_points),
+       set score = score - v_points,
            wins  = greatest(0, wins - 1),
            updated_at = clock_timestamp()
-     where game_id = v_game.id and student_id = v_winner;
+      where game_id = v_game.id and student_id = v_winner;
   end if;
 
   update buzzes set accepted = false where id = v_round.winner_buzz_id;
@@ -529,10 +529,10 @@ begin
   if v_round.points_awarded then
     v_reverted := v_round.awarded_points;
     update scores
-       set score = greatest(0, score - v_reverted),
+       set score = score - v_reverted,
            wins  = greatest(0, wins - 1),
            updated_at = clock_timestamp()
-     where game_id = v_game.id and student_id = v_previous;
+      where game_id = v_game.id and student_id = v_previous;
   end if;
 
   v_count := coalesce(p_countdown_seconds, (v_game.settings->>'countdown_seconds')::int, 3);

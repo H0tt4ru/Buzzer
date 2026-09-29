@@ -31,7 +31,7 @@ export function SettingsPanel({
 
   const commitPoints = () => {
     const parsed = Number.parseInt(points, 10);
-    const next = Number.isFinite(parsed) ? Math.min(100, Math.max(0, parsed)) : 1;
+    const next = Number.isFinite(parsed) ? Math.min(100, Math.max(-100, parsed)) : 1;
     setPoints(String(next));
     if (next !== settings.points_per_win) void onChange({ points_per_win: next });
   };
@@ -46,14 +46,14 @@ export function SettingsPanel({
             size="icon"
             aria-label="−1"
             disabled={busy}
-            onClick={() => void onChange({ points_per_win: Math.max(0, settings.points_per_win - 1) })}
+            onClick={() => void onChange({ points_per_win: Math.max(-100, settings.points_per_win - 1) })}
           >
             −
           </Button>
           <input
             inputMode="numeric"
             value={points}
-            onChange={(event) => setPoints(event.target.value.replace(/[^0-9]/g, ''))}
+            onChange={(event) => setPoints(event.target.value.replace(/[^0-9\-]/g, ''))}
             onBlur={commitPoints}
             onKeyDown={(event) => {
               if (event.key === 'Enter') commitPoints();

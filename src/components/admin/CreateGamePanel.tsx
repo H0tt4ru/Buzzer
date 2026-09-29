@@ -14,7 +14,7 @@ import { adminErrorMessage, t } from '@/lib/i18n';
 import { parseNames } from '@/lib/utils';
 import type { CreatedGame } from '@/types/game';
 
-const SAMPLE = 'Andi\nBudi\nCitra\nDimas';
+const SAMPLE = 'Regu A\nRegu B\nRegu C\nRegu D';
 
 /**
  * The entry point. A game is created from a list of names — no accounts, no

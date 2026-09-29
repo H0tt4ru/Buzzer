@@ -28,7 +28,7 @@ export function Leaderboard({
     return <p className="py-6 text-center text-sm text-muted-foreground">{t.admin.leaderboardHidden}</p>;
   }
 
-  const scored = board.filter((row) => row.score > 0 || row.wins > 0);
+  const scored = board;
 
   if (scored.length === 0) {
     return (
