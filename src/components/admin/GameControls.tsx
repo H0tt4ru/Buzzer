@@ -55,7 +55,7 @@ export function GameControls({
 
   const manualAward = game.settings.award_mode === 'manual';
   const canAward = hasWinner && manualAward && !(round?.points_awarded ?? false);
-  const nextRoundDisabled = working || paused || (manualAward && hasWinner && !(round?.points_awarded ?? false));
+  const nextRoundDisabled = working || paused || !hasWinner;
 
   if (ended) {
     return (
